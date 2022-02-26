@@ -4,10 +4,10 @@ import Loader from "../components/Loader";
 
 import PostFeed from "../components/PostFeed";
 
-import { firestore, postToJSON } from "../lib/firebase";
+import { firestore, postToJSON, fromMillis } from "../lib/firebase";
 import { useState } from "react";
 
-const LIMIT = 1;
+const LIMIT = 20;
 
 export async function getServerSideProps(context) {
   const postsQuery = firestore
@@ -33,7 +33,7 @@ export default function Home(props) {
     setLoading(true);
     const last = posts[posts.length - 1];
 
-    cursor = typeof last.createdAt === 'number' ? fromMillis(last.createdAt) : last.createdAt;
+    const cursor = typeof last.createdAt === 'number' ? fromMillis(last.createdAt) : last.createdAt;
 
     const query = firestore.collectionGroup('posts').where('published', '==', true).orderBy('createdAt', 'desc').startAfter(cursor).limit(LIMIT);
 
